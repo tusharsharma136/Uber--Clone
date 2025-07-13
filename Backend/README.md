@@ -297,3 +297,147 @@ Send a JSON object in the following format:
 ```
 
 ---
+
+# Captain Login Endpoint Documentation
+
+## POST `/captains/login`
+
+Authenticates an existing captain and returns a JWT token.
+
+### Description
+
+This endpoint allows a registered captain to log in using their email and password. On successful authentication, a JWT token and the captain object are returned.
+
+### Request Body
+
+Send a JSON object in the following format:
+
+```json
+{
+  "email": "jane.smith@example.com",
+  "password": "yourpassword"
+}
+```
+
+#### Field Requirements
+
+- `email` (string, required): Must be a valid email address.
+- `password` (string, required): Minimum 6 characters.
+
+### Responses
+
+| Status Code | Description                                 |
+|-------------|---------------------------------------------|
+| 200         | Login successful. Returns JWT and captain object.         |
+| 400         | Validation error. Returns details of the errors.          |
+| 401         | Invalid email or password.                                |
+| 500         | Internal server error.                                    |
+
+### Example Success Response
+
+```json
+{
+  "token": "jwt_token_here",
+  "captain": {
+    "_id": "captain_id_here",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "email": "jane.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+### Example Error Response
+
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+---
+
+# Get Captain Profile Endpoint Documentation
+
+## GET `/captains/profile`
+
+Retrieves the profile information of the authenticated captain.
+
+### Description
+
+This endpoint returns the profile details of the currently authenticated captain. The request must include a valid JWT token in the cookie or Authorization header.
+
+### Authentication
+
+- Requires authentication via JWT token (sent as a cookie or in the `Authorization: Bearer <token>` header).
+
+### Responses
+
+| Status Code | Description                                 |
+|-------------|---------------------------------------------|
+| 200         | Returns the captain profile.                |
+| 401         | Unauthorized. Missing or invalid token.     |
+| 500         | Internal server error.                      |
+
+### Example Success Response
+
+```json
+{
+  "captain": {
+    "_id": "captain_id_here",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "email": "jane.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+---
+
+# Captain Logout Endpoint Documentation
+
+## GET `/captains/logout`
+
+Logs out the authenticated captain.
+
+### Description
+
+This endpoint logs out the current captain by clearing the authentication token cookie and blacklisting the token. The request must include a valid JWT token.
+
+### Authentication
+
+- Requires authentication via JWT token (sent as a cookie or in the `Authorization: Bearer <token>` header).
+
+### Responses
+
+| Status Code | Description                                 |
+|-------------|---------------------------------------------|
+| 200         | Logout successful.                          |
+| 401         | Unauthorized. Missing or invalid token.     |
+| 500         | Internal server error.                      |
+
+### Example Success Response
+
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+---
