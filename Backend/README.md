@@ -210,3 +210,90 @@ This endpoint logs out the current user by clearing the authentication token coo
 ```
 
 ---
+
+# Captain Registration Endpoint Documentation
+
+## POST `/captains/register`
+
+Registers a new captain (driver) in the system.
+
+### Description
+
+This endpoint allows a new captain to register by providing their name, email, password, and vehicle details. The password is securely hashed before being stored. On successful registration, the captain object is returned.
+
+### Request Body
+
+Send a JSON object in the following format:
+
+```json
+{
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Smith"
+  },
+  "email": "jane.smith@example.com",
+  "password": "yourpassword",
+  "vehicle": {
+    "color": "Red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+#### Field Requirements
+
+- `fullname.firstname` (string, required): Minimum 3 characters.
+- `fullname.lastname` (string, optional): Minimum 3 characters if provided.
+- `email` (string, required): Must be a valid email address.
+- `password` (string, required): Minimum 6 characters.
+- `vehicle.color` (string, required): Minimum 3 characters.
+- `vehicle.plate` (string, required): Minimum 3 characters.
+- `vehicle.capacity` (integer, required): Minimum value 1.
+- `vehicle.vehicleType` (string, required): Must be one of `"car"`, `"motorcycle"`, or `"auto"`.
+
+### Responses
+
+| Status Code | Description                                 |
+|-------------|---------------------------------------------|
+| 201         | Captain registered successfully. Returns captain object. |
+| 400         | Validation error. Returns details of the errors.         |
+| 500         | Internal server error.                                   |
+
+### Example Success Response
+
+```json
+{
+  "captain": {
+    "_id": "captain_id_here",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "email": "jane.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+### Example Error Response
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Vehicle color is required",
+      "param": "vehicle.color",
+      "location": "body"
+    }
+  ]
+}
+```
+
+---
