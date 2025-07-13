@@ -1,7 +1,7 @@
 const userModel = require('../models/user.model');
 const userService = require('../services/user.service');
 const {validationResult} = require('express-validator');
-
+const blacklistTokenModel = require('../models/blacklistToken.model');
 
 
 module.exports.registerUser = async (req, res, next)=>{
@@ -48,5 +48,34 @@ module.exports.loginUser = async (req, res, next)=>{
 
     const token = user.generateAuthToken();
 
+    res.cookie('token', token);
+
+
+
     res.status(200).json({token, user});
+}
+
+module.exports.getUserProfile = async (req, res, next) => {
+    const userId = req.user._id; // Assuming you have middleware to set req.user
+    const user = await userModel.findById(userId).select('-password');
+    if(!user){
+        return res.status(404).json({message: 'User not found'});
+    }
+    res.status(200).json({user});
+}
+
+module.exports.logoutUser = async (req, res, next) => {
+    
+    res.clearCookie('token');
+    
+    const token = req.cookies.token || req.headers.authorization.split(' ')[1];
+    // if (!token) {
+    //     return res.status(401).json({ message: 'Unauthorized' });
+    // }
+
+    // Here you can add logic to blacklist the token if needed
+    // For example, save it in a blacklist collection
+    await blacklistTokenModel.create({ token });
+    
+    res.status(200).json({ message: 'Logged out' });
 }
